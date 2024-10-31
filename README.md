@@ -27,7 +27,47 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Defining a Workflow
+You can define states, transitions, and event actions as follows
+
+```ruby
+# Usage Example
+
+# Define a custom workflow class
+class MyWorkflow < OrchestrateFlow::Workflow
+  # Define possible states
+  state :pending
+  state :in_progress
+  state :completed
+  state :failed
+
+  # Define transitions between states
+  transition event: :start, from: :pending, to: :in_progress
+  transition event: :complete, from: :in_progress, to: :completed
+  transition event: :fail, from: :in_progress, to: :failed
+
+  # Define actions to trigger on specific events
+  on :start do
+    puts "Workflow started!"
+  end
+
+  on :complete do
+    puts "Workflow completed successfully!"
+  end
+
+  on :fail do
+    puts "Workflow failed. Please try again."
+  end
+end
+
+# Initialize the workflow and trigger events
+workflow = MyWorkflow.new
+puts workflow.state                   # => :pending
+workflow.trigger(:start)              # => Workflow started!
+puts workflow.state                   # => :in_progress
+workflow.trigger(:complete)           # => Workflow completed successfully!
+puts workflow.state                   # => :completed
+```
 
 ## Development
 
