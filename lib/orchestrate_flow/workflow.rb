@@ -1,4 +1,9 @@
+# frozen_string_literal: true
+
 module OrchestrateFlow
+  # The Workflow class represents a basic state machine for defining workflows
+  # with states, transitions, and event-driven actions. It allows developers
+  # to manage complex workflows using defined states and triggers.
   class Workflow
     attr_reader :state
 
@@ -29,25 +34,25 @@ module OrchestrateFlow
 
     # Execute a transition event
     def trigger(event)
-      if valid_transition?(event)
-        execute_event_action(event)
-        @state = self.class.transitions[event][:to]
-      else
+      unless valid_transition?(event)
         raise InvalidTransitionError, "Cannot transition from #{@state} using event #{event}"
       end
+
+      execute_event_action(event)
+      @state = self.class.transitions[event][:to]
     end
 
     # Accessors for states, transitions, and event actions
-    def self.states
-      @states
+    class << self
+      attr_reader :states
     end
 
-    def self.transitions
-      @transitions
+    class << self
+      attr_reader :transitions
     end
 
-    def self.event_actions
-      @event_actions
+    class << self
+      attr_reader :event_actions
     end
 
     private
@@ -61,7 +66,7 @@ module OrchestrateFlow
     # Execute an event action if defined
     def execute_event_action(event)
       action = self.class.event_actions[event]
-      action.call if action
+      action&.call
     end
 
     # Custom error for invalid transitions
