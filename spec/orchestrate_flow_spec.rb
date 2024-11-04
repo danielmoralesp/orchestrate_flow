@@ -4,8 +4,4 @@ RSpec.describe OrchestrateFlow do
   it "has a version number" do
     expect(OrchestrateFlow::VERSION).not_to be nil
   end
-
-  it "does something useful" do
-    expect(false).to eq(true)
-  end
 end
